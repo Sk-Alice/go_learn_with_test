@@ -1,6 +1,9 @@
 package bankSystem
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Bitcoin int
 
@@ -22,8 +25,14 @@ func (w *Wallet) Deposit(amount Bitcoin) {
 }
 
 // Withdraw 取钱
-func (w *Wallet) Withdraw(amount Bitcoin) {
+func (w *Wallet) Withdraw(amount Bitcoin) error {
+	if amount > w.balance {
+		return errors.New("cannot withdraw, insufficient funds")
+	}
+
 	w.balance -= amount
+
+	return nil
 }
 
 // Balance 查看金额
