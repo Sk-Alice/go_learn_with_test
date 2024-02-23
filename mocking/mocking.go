@@ -11,28 +11,44 @@ import (
 const finalWorld = "Go!"
 const countdownStart = 3
 
+const write = "write"
+const sleep = "sleep"
+
 type Sleeper interface {
 	Sleep()
-}
-
-type SpySleeper struct {
-	// 跟踪记录 Sleep() 被调用了多少次
-	Calls int
 }
 
 type ConfigurableSleeper struct {
 	duration time.Duration
 }
 
+// CountdownOperationSpy 监视操作顺序是否正确
+// 本次测试中应为：
+//
+//	Sleep
+//	Print N
+//	Sleep
+//	Print N-1
+//	Sleep
+//	etc
+type CountdownOperationsSpy struct {
+	Calls []string
+}
+
+// 实现了 Sleeper 接口
+func (s *CountdownOperationsSpy) Sleep() {
+	s.Calls = append(s.Calls, sleep)
+}
+
+// 实现了 io.Writer 接口
+func (s *CountdownOperationsSpy) Write([]byte) (n int, err error) {
+	s.Calls = append(s.Calls, write)
+	return
+}
+
 // Sleep 真正运行时调用
 func (o *ConfigurableSleeper) Sleep() {
 	time.Sleep(o.duration)
-}
-
-// Sleep 测试运行时调用，通过记录调用的次数模拟真实的时间等待行为
-// 避免了 缓慢的测试会破坏开发人员的生产力
-func (s *SpySleeper) Sleep() {
-	s.Calls++
 }
 
 func Countdown(out io.Writer, sleeper Sleeper) {
