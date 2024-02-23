@@ -1,9 +1,12 @@
 package concurrent
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 )
+
+var tenSecondTimeout = 10 * time.Second
 
 type WebsiteChecker func(string) bool
 type result struct {
@@ -29,18 +32,28 @@ func CheckWebsites(wc WebsiteChecker, urls []string) map[string]bool {
 	return results
 }
 
-func Racer(a, b string) (winner string) {
-	startA := time.Now()
-	http.Get(a)
-	aDuration := time.Since(startA)
+func ping(url string) chan bool {
+	ch := make(chan bool)
+	go func() {
+		_, _ = http.Get(url)
+		ch <- true
+	}()
 
-	startB := time.Now()
-	http.Get(b)
-	bDuration := time.Since(startB)
+	return ch
+}
 
-	if aDuration < bDuration {
-		return a
+func Racer(a, b string) (winner string, err error) {
+	return ConfigurableRacer(a, b, tenSecondTimeout)
+}
+
+func ConfigurableRacer(a, b string, timeout time.Duration) (winner string, err error) {
+	// 在进入 select 语句之前，ping(a) 和 ping(b) 函数都会被调用
+	select {
+	case <-ping(a):
+		return a, nil
+	case <-ping(b):
+		return b, nil
+	case <-time.After(timeout):
+		return "", fmt.Errorf("timed out waiting for %s and %s", a, b)
 	}
-
-	return b
 }
