@@ -1,5 +1,7 @@
 package rectangle
 
+// https://studygolang.gitbook.io/learn-go-with-tests/go-ji-chu/structs-methods-and-interfaces
+
 import "testing"
 
 func TestPerimeter(t *testing.T) {

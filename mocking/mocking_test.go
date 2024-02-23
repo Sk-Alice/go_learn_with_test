@@ -1,5 +1,7 @@
 package mocking
 
+// https://studygolang.gitbook.io/learn-go-with-tests/go-ji-chu/mocking
+
 import (
 	"bytes"
 	"reflect"

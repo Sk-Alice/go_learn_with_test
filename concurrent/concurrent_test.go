@@ -1,5 +1,8 @@
 package concurrent
 
+// https://studygolang.gitbook.io/learn-go-with-tests/go-ji-chu/concurrency
+// https://studygolang.gitbook.io/learn-go-with-tests/go-ji-chu/select
+
 import (
 	"net/http"
 	"net/http/httptest"

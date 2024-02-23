@@ -1,5 +1,7 @@
 package dictionary
 
+// https://studygolang.gitbook.io/learn-go-with-tests/go-ji-chu/maps
+
 import (
 	"errors"
 	"testing"
